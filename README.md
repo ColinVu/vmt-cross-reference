@@ -1,2 +1,2 @@
-# vmt-cross-reference
-Calculates change in VMT near a given location between 2008-2022, with nearly data
+# Hello!
+This is my algorithm for calculating the Nearby Vehicle Miles Traveled (NVMT) for a given location in Georgia, as well as the change in NVMT between any two input years from 2008 to 2022. Simply run the algorithm.py algorithm and the command prompt will ask for input numbers. This program was developed in PyCharm Community Edition with no additional packages. Let me know if you need any help running the program. A version is currently in development that integrates this algorithm into an ArcGIS web application!
