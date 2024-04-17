@@ -30,7 +30,7 @@ for item in data['AADT_STANDARD_DATA_ExportTable']:
     )
     station_data_list.append(station_data)
 
-# Entering information for a new point
+# Entering information for the new point
 new_lat = float(input("Enter latitude coordinate: "))
 new_long = float(input("Enter longitude coordinate: "))
 radius = float(input("Enter a radius for the VMT effect points (mi): "))
@@ -43,18 +43,30 @@ for item in station_data_list:
     long_diff = new_long - item.longitude
     dist = math.sqrt(pow(lat_diff, 2.) + pow(long_diff, 2.))
     if dist < (0.016992 * radius):
+        print("distance: " + str(dist) + ", begin vmt: " + str(item.vmt[first_date-2008]) + ", end vmt: " + str(item.vmt[last_date-2008]))
         distance_weight = 0.5
         count = 0
-        print("reached")
+        last = 0
         while count < 5:
-            if dist < (0.016992 * distance_weight * radius):
-                print("time: " + str(count))
-                weighted_sum_begin += distance_weight * 2. * item.vmt[first_date - 2008]
-                weighted_sum_end += distance_weight * 2. * item.vmt[last_date - 2008]
+            if (count == 4):
+                weighted_sum_begin += 32. * 2. * item.vmt[first_date - 2008]
+                weighted_sum_end += 32. * 2. * item.vmt[last_date - 2008]
+                print("weight: " + str(32.) + ", weighted add: " + str(
+                    32. * 2. * item.vmt[first_date - 2008]) + " " + str(
+                    32. * 2. * item.vmt[last_date - 2008]))
+                count = 5
+                last = 1
+            if dist > (0.016992 * distance_weight * radius or last == 0):
+                weighted_sum_begin += (1.0/distance_weight) * 2. * item.vmt[first_date - 2008]
+                weighted_sum_end += (1.0/distance_weight) * 2. * item.vmt[last_date - 2008]
+                print("weight: " + str(1.0/distance_weight) + ", weighted add: " + str(
+                    (1.0/distance_weight) * 2. * item.vmt[first_date - 2008]) + " " + str(
+                    (1.0/distance_weight) * 2. * item.vmt[last_date - 2008]))
                 count = 5
             count += 1
-            distance_weight /= 0.5
+            distance_weight = 0.5 * distance_weight
+weighted_sum_change = float(int((weighted_sum_end - weighted_sum_begin) * 100.)) / 100.
+change_percent = float(int(((weighted_sum_end - weighted_sum_begin) / weighted_sum_begin) * 10000.)) / 100.
 weighted_sum_begin = float(int(weighted_sum_begin * 100.)) / 100.
 weighted_sum_end = float(int(weighted_sum_end * 100.)) / 100.
-weighted_sum_change = float(int((weighted_sum_end - weighted_sum_begin) * 100.)) / 100.
-print("The NVMT begins at " + str(weighted_sum_begin) + " and ends at " + str(weighted_sum_end) + ". The change in NVMT is " + str(weighted_sum_change))
+print("The NVMT begins at " + str(weighted_sum_begin) + " and ends at " + str(weighted_sum_end) + ". The change in NVMT is " + str(weighted_sum_change) + ", or " + str(change_percent) + "%.")
