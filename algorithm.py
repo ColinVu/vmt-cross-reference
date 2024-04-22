@@ -43,28 +43,12 @@ for item in station_data_list:
     long_diff = new_long - item.longitude
     dist = math.sqrt(pow(lat_diff, 2.) + pow(long_diff, 2.))
     if dist < (0.016992 * radius):
+        total_dist = 0.016992 * radius
+        inversion = total_dist / dist
         print("distance: " + str(dist) + ", begin vmt: " + str(item.vmt[first_date-2008]) + ", end vmt: " + str(item.vmt[last_date-2008]))
-        distance_weight = 0.5
-        count = 0
-        last = 0
-        while count < 5:
-            if (count == 4):
-                weighted_sum_begin += 32. * 2. * item.vmt[first_date - 2008]
-                weighted_sum_end += 32. * 2. * item.vmt[last_date - 2008]
-                print("weight: " + str(32.) + ", weighted add: " + str(
-                    32. * 2. * item.vmt[first_date - 2008]) + " " + str(
-                    32. * 2. * item.vmt[last_date - 2008]))
-                count = 5
-                last = 1
-            if dist > (0.016992 * distance_weight * radius or last == 0):
-                weighted_sum_begin += (1.0/distance_weight) * 2. * item.vmt[first_date - 2008]
-                weighted_sum_end += (1.0/distance_weight) * 2. * item.vmt[last_date - 2008]
-                print("weight: " + str(1.0/distance_weight) + ", weighted add: " + str(
-                    (1.0/distance_weight) * 2. * item.vmt[first_date - 2008]) + " " + str(
-                    (1.0/distance_weight) * 2. * item.vmt[last_date - 2008]))
-                count = 5
-            count += 1
-            distance_weight = 0.5 * distance_weight
+        weighted_sum_begin += pow(inversion, 1.5) * item.vmt[first_date - 2008]
+        weighted_sum_end += pow(inversion, 1.5) * item.vmt[last_date - 2008]
+        print("ratio: " + str(inversion) + ", final add begin: " + str(pow(inversion, 1.5) * item.vmt[first_date - 2008]) + ", final add end: " + str(pow(inversion, 1.5) * item.vmt[last_date - 2008]))
 weighted_sum_change = float(int((weighted_sum_end - weighted_sum_begin) * 100.)) / 100.
 change_percent = float(int(((weighted_sum_end - weighted_sum_begin) / weighted_sum_begin) * 10000.)) / 100.
 weighted_sum_begin = float(int(weighted_sum_begin * 100.)) / 100.
